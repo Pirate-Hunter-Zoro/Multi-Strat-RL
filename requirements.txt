@@ -3,3 +3,4 @@ torch
 gymnasium
 minigrid
 matplotlib
+pandas

@@ -4,6 +4,8 @@ from src.config import ENV_NAME, NUM_FRAMES, HYPERPARAMETERS, DEVICE
 import gymnasium as gym
 import torch
 from minigrid.wrappers import FlatObsWrapper
+import matplotlib.pyplot as plt
+import pandas as pd
 
 def main():
     config = HYPERPARAMETERS[ENV_NAME]
@@ -17,7 +19,8 @@ def main():
     epsilon_decay = config['epsilon_decay']
     
     env = gym.make(id=ENV_NAME, render_mode="rgb_array")
-    env = FlatObsWrapper(env)
+    if "MiniGrid" in ENV_NAME:
+        env = FlatObsWrapper(env)
     state_dim = env.observation_space.shape[0]
     n_actions = env.action_space.n # TODO - my interpretter is not flagging '.n' as an attribute - pretty sure it's wrong
     
@@ -39,8 +42,8 @@ def main():
         if done:
             curr_state, _ = env.reset()
             rewards_per_episode.append(curr_episode_reward)
-            curr_episode_reward = 0
             print(f"Episode: {len(rewards_per_episode)} | Reward: {curr_episode_reward:.2f} | Epsilon: {curr_epsilon:.3f} | Percent Through Training: {i*100/NUM_FRAMES:.3f}%              ", end='\r')
+            curr_episode_reward = 0
         else:
             curr_state = next_state
             
@@ -54,6 +57,22 @@ def main():
         # Update target network
         if ablation_config.use_delayed or (i % hard_update_freq == 0):
             agent.target_update(tau=tau, use_delayed=ablation_config.use_delayed)
+    
+    # Now that training is done, plot the results
+    reward_series = pd.Series(data=rewards_per_episode)
+    smoothed_rewards = reward_series.ewm(span=20).mean() # Assigns higher weight to more recent rewards
+    plt.figure(figsize=(10, 5))
+    # Plot raw rewards
+    plt.plot(rewards_per_episode, label="Raw Reward", color='cyan', alpha=0.3)
+    # Plot 'trend'
+    plt.plot(smoothed_rewards, label='EMA', color='darkblue', alpha=1.0)
+    plt.title(f'Raw and Smoothed Rewards by the Episode: {ENV_NAME}')
+    plt.xlabel("Episodes")
+    plt.ylabel("Reward")
+    plt.legend()
+    plt.grid(visible=True, alpha=0.2)
+    plt.savefig(f"results/training_graph_{ENV_NAME}.png")
+    plt.close()
         
             
 if __name__ == "__main__":
