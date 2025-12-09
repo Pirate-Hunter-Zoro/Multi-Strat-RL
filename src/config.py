@@ -22,7 +22,7 @@ HYPERPARAMETERS = {
             'epsilon_start' : 1.0, # Starting epsilon/exploration value
             'epsilon_end' : 0.05, # Ending minimum epsilon value
             'epsilon_decay' : 50000, # Number of time steps epsilon decays over
-            'techniques' : AblationConfig(use_distributional=False, use_delayed=False, use_magnet=False, use_kl_penalty=False), # The RL technique to use for the environment
+            'techniques' : AblationConfig(use_distributional=True, use_delayed=True, use_magnet=True, use_kl_penalty=True), # The RL technique to use for the environment
             'V_min' : -10, # Minimum atom value in the case of distributional RL
             'V_max' : 10, # Maximum atom value
             'num_atoms' : 51, # Number of atoms to be used in distributional RL
@@ -39,9 +39,9 @@ HYPERPARAMETERS = {
             'epsilon_start' : 1.0, 
             'epsilon_end' : 0.05,
             'epsilon_decay' : 50000, 
-            'techniques' : AblationConfig(use_distributional=False, use_delayed=False, use_magnet=False, use_kl_penalty=False),
+            'techniques' : AblationConfig(use_distributional=True, use_delayed=True, use_magnet=True, use_kl_penalty=True),
             'V_min' : 0.0, 
-            'V_max' : 1.0, 
+            'V_max' : 200.0, 
             'num_atoms' : 51, 
             'magnet_scale' : 0.01,
             'kl_penalty_scale' : 0.1,

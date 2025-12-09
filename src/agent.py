@@ -55,14 +55,14 @@ class RainbowAgent:
         if self.support != None: # C51
             # Estimate atom probabilities given the experience - states and actions are known at each step
             atoms = self.num_atoms * torch.arange(start=0, end=batch[0].size(0), step=1) # [0, NUM_ATOMS, 2*NUM_ATOMS, etc...]
-            atoms = atoms.reshape(size=(batch[0].size(0),1)).to(DEVICE)
+            atoms = atoms.reshape(shape=(batch[0].size(0),1)).to(DEVICE)
             
             # Use the online network to select the best next actions
             next_atom_logits = self.online_net(next_s) # BATCH x NUM_ACTIONS x NUM_ATOMS
             next_atom_probs = torch.softmax(next_atom_logits, dim=-1)
             weighted_next_atom_vals = next_atom_probs * self.support.reshape(1, 1, len(self.support))
             expected_next_atom_vals = torch.sum(input=weighted_next_atom_vals, dim=-1)
-            next_actions = torch.argmax(input=expected_next_atom_vals, dim=1).unsqueeze(dim=-1).unsqueeze(dim=-1).expand(-1,self.num_atoms) # BATCH x 1 x NUM_ATOMS
+            next_actions = torch.argmax(input=expected_next_atom_vals, dim=1).unsqueeze(dim=-1).unsqueeze(dim=-1).expand(-1, -1, self.num_atoms) # BATCH x 1 x NUM_ATOMS
             
             # Use the target network to find the atom probabilities associated with the action selected by the online network
             next_atom_logits_target = self.target_net(next_s)
@@ -87,22 +87,22 @@ class RainbowAgent:
             lower_bin_weighted_prob_addition = lower_weight * next_atom_probs_for_taken_actions # BATCH_SIZE x NUM_ATOMS
            
             # Update these two bin probabilities, over all the batches
-            m = torch.zeros(size=(batch.shape[0], self.num_atoms)) # BATCH X NUM_ATOMS
+            m = torch.zeros(size=(batch[0].size(0), self.num_atoms)) # BATCH X NUM_ATOMS
             l = l.long()
             u = u.long()
             # NOTE - the index_add_ - with the trailing '_' in the function call - is an in-place operation
-            m.view(-1).index_add_(dim=0, index=u, source=upper_bin_weighted_prob_addition.flatten()) # Over all the batches, accumulate the weights given to each 'atom bin'
-            m.view(-1).index_add_(dim=0, index=l, source=lower_bin_weighted_prob_addition.flatten())
+            m.view(-1).index_add_(dim=0, index=u.flatten(), source=upper_bin_weighted_prob_addition.flatten()) # Over all the batches, accumulate the weights given to each 'atom bin'
+            m.view(-1).index_add_(dim=0, index=l.flatten(), source=lower_bin_weighted_prob_addition.flatten())
             
             # Now we calculate the loss since m gives us out target atom probabilities
             atom_logits = self.online_net(s)
             atom_log_softmax = torch.log_softmax(input=atom_logits, dim=-1)
             # We only care about the log-softmax atom probabilities associated with the actions our agent took
-            action_indices = a.unsqueeze(dim=-1).unsqueeze(dim=-1).expand(-1,self.num_atoms) # BATCH x 1 x NUM_ATOMS
+            action_indices = a.unsqueeze(dim=-1).expand(-1, -1, self.num_atoms) # BATCH x 1 x NUM_ATOMS
             atom_log_softmax_for_taken_actions = torch.gather(input=atom_log_softmax, dim=1, index=action_indices).squeeze() # BATCH x NUM_ATOMS
             
             # We now have the target atom probabilities over all batches
-            loss = -torch.sum(input=m * atom_log_softmax_for_taken_actions, dim=1) / batch[0].size(0)
+            loss = -torch.sum(input=m * atom_log_softmax_for_taken_actions, dim=1).mean()
             
             if self.ablation_config.use_kl_penalty:
                 kl_loss = torch.nn.functional.kl_div(input=atom_log_softmax_for_taken_actions, target=m, reduction='batchmean')
