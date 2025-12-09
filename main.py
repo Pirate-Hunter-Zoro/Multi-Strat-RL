@@ -2,9 +2,8 @@ from src.agent import RainbowAgent
 from src.buffers import ReplayBuffer
 from src.config import ENV_NAME, NUM_FRAMES, HYPERPARAMETERS, DEVICE
 import gymnasium as gym
-from gymnasium.wrappers import FlattenObservation
 import torch
-import minigrid # Simply importing will register the environment in the background
+from minigrid.wrappers import FlatObsWrapper
 
 def main():
     config = HYPERPARAMETERS[ENV_NAME]
@@ -18,7 +17,7 @@ def main():
     epsilon_decay = config['epsilon_decay']
     
     env = gym.make(id=ENV_NAME, render_mode="rgb_array")
-    env = FlattenObservation(env)
+    env = FlatObsWrapper(env)
     state_dim = env.observation_space.shape[0]
     n_actions = env.action_space.n # TODO - my interpretter is not flagging '.n' as an attribute - pretty sure it's wrong
     
