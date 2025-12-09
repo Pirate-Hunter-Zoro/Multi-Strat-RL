@@ -4,3 +4,4 @@ gymnasium
 minigrid
 matplotlib
 pandas
+rlcard

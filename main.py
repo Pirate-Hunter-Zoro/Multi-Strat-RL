@@ -37,7 +37,7 @@ def run_ablation(env_name: str, ablation_technique_set: AblationTechniques) -> t
     else:
         n_actions = env.action_space.shape[0] # Continuous action space case
     
-    agent = RainbowAgent(state_dim=state_dim, num_actions=n_actions, config_dict=config)
+    agent = RainbowAgent(state_dim=state_dim, num_actions=n_actions, config_dict=config, ablation_config=ablation_technique_set)
     buf = ReplayBuffer(state_dim=state_dim, max_size=buffer_size)
     rewards_per_episode = []
     curr_episode_reward = 0.0

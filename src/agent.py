@@ -2,15 +2,15 @@ import torch
 import torch.optim as optim
 import torch.nn.functional as f
 from src.networks import RainbowDQN
-from src.config import DEVICE
+from src.config import DEVICE, AblationTechniques
 import copy
 import random
 
 class RainbowAgent:
     
-    def __init__(self, state_dim: int, num_actions: int, config_dict: dict):
+    def __init__(self, state_dim: int, num_actions: int, config_dict: dict, ablation_config: AblationTechniques):
         self.gamma, self.v_min, self.v_max, self.num_atoms, self.magnet_scale, self.kl_penalty_scale = config_dict['gamma'], config_dict['V_min'], config_dict['V_max'], config_dict['num_atoms'], config_dict['magnet_scale'], config_dict['kl_penalty_scale']
-        self.ablation_config = config_dict['techniques']
+        self.ablation_config = ablation_config.value
         self.online_net = RainbowDQN(state_dim=state_dim, num_actions=num_actions, num_atoms=self.num_atoms, config=self.ablation_config).to(DEVICE)
         self.target_net = copy.deepcopy(self.online_net).to(DEVICE)
         lr = config_dict['lr']
