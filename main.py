@@ -4,6 +4,7 @@ from src.config import ENV_NAME, NUM_FRAMES, HYPERPARAMETERS, DEVICE
 import gymnasium as gym
 from gymnasium.wrappers import FlattenObservation
 import torch
+import minigrid # Simply importing will register the environment in the background
 
 def main():
     config = HYPERPARAMETERS[ENV_NAME]
