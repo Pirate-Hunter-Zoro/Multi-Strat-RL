@@ -1,0 +1,27 @@
+#!/bin/bash
+#SBATCH --job-name=multi_strat_rl
+#SBATCH --partition=c3_accel
+#SBATCH --time=7-00:00:00
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH -o logs/multi_strat_rl_out.txt
+#SBATCH -e logs/multi_strat_rl_err.txt
+#SBATCH --gres=gpu:1
+
+# Exit immediately if command fails
+set -e
+
+# ---- Conda configuration ----
+CONDA_ENV=venv
+N_THREADS="${SLURM_CPUS_PER_TASK}"
+
+# ---- Boilerplate env/bootstrap ----
+module purge
+module load Anaconda3/2025.06-0
+eval "$(conda shell.bash hook)"
+
+# Conda often dislikes 'set -u'—use this safe pattern:
+set +u; conda activate "${CONDA_ENV}"; set -u || exit 10
+
+srun python -m main

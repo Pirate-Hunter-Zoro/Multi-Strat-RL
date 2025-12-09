@@ -1,28 +1,41 @@
 from src.agent import RainbowAgent
 from src.buffers import ReplayBuffer
-from src.config import ENV_NAME, NUM_FRAMES, HYPERPARAMETERS, DEVICE
+from src.config import NUM_FRAMES, HYPERPARAMETERS, DEVICE, AblationTechniques
 import gymnasium as gym
 import torch
 from minigrid.wrappers import FlatObsWrapper
 import matplotlib.pyplot as plt
 import pandas as pd
+from pathlib import Path
+import os
 
-def main():
-    config = HYPERPARAMETERS[ENV_NAME]
+def run_ablation(env_name: str, ablation_technique_set: AblationTechniques) -> tuple[list[float], pd.Series]:
+    """Run reinforcement learning techniques on the given environment specified by the given ablation techniques
+
+    Args:
+        env_name (str): Environment to run RL on
+        ablation_technique_set (AblationTechniques): Contains information on the ablation techniques to use
+
+    Returns:
+        tuple[list[float], pd.Series]: Rewards and smoothed rewards by the episode
+    """
+    config = HYPERPARAMETERS[env_name]
     batch_size = config['batch_size']
     buffer_size = config['buffer_size']
-    ablation_config = config['techniques']
     tau = config['tau']
     hard_update_freq = config['hard_update_freq']
     epsilon_start = config['epsilon_start']
     epsilon_end = config['epsilon_end']
     epsilon_decay = config['epsilon_decay']
     
-    env = gym.make(id=ENV_NAME, render_mode="rgb_array")
-    if "MiniGrid" in ENV_NAME:
+    env = gym.make(id=env_name, render_mode="rgb_array")
+    if "MiniGrid" in env_name:
         env = FlatObsWrapper(env)
     state_dim = env.observation_space.shape[0]
-    n_actions = env.action_space.n # TODO - my interpretter is not flagging '.n' as an attribute - pretty sure it's wrong
+    if hasattr(env.action_space, 'n'):
+        n_actions = env.action_space.n
+    else:
+        n_actions = env.action_space.shape[0] # Continuous action space case
     
     agent = RainbowAgent(state_dim=state_dim, num_actions=n_actions, config_dict=config)
     buf = ReplayBuffer(state_dim=state_dim, max_size=buffer_size)
@@ -55,25 +68,46 @@ def main():
         # Update epsilon to decay linearly over the desired number of steps down to epsilon_end
         curr_epsilon = max(epsilon_end, curr_epsilon - decay_step)
         # Update target network
-        if ablation_config.use_delayed or (i % hard_update_freq == 0):
-            agent.target_update(tau=tau, use_delayed=ablation_config.use_delayed)
+        if ablation_technique_set.value.use_delayed or (i % hard_update_freq == 0):
+            agent.target_update(tau=tau, use_delayed=ablation_technique_set.value.use_delayed)
     
     # Now that training is done, plot the results
     reward_series = pd.Series(data=rewards_per_episode)
     smoothed_rewards = reward_series.ewm(span=20).mean() # Assigns higher weight to more recent rewards
+    
+    return rewards_per_episode, smoothed_rewards
+
+def obtain_results(env_name: str):
+    """Obtain results for all ablation techniques on the given environment
+
+    Args:
+        env_name (str): Environment to run RL on
+    """
+    # Create a plot for all ablation techniques
     plt.figure(figsize=(10, 5))
-    # Plot raw rewards
-    plt.plot(rewards_per_episode, label="Raw Reward", color='cyan', alpha=0.3)
-    # Plot 'trend'
-    plt.plot(smoothed_rewards, label='EMA', color='darkblue', alpha=1.0)
-    plt.title(f'Raw and Smoothed Rewards by the Episode: {ENV_NAME}')
+    for technique in AblationTechniques:
+        print(f"Running technique: {technique.name} with config: Distributional={technique.value.use_distributional}, Delayed={technique.value.use_delayed}, Magnet={technique.value.use_magnet}, KL Penalty={technique.value.use_kl_penalty}")
+        rewards_per_episode, smoothed_rewards = run_ablation(env_name=env_name, ablation_technique_set=technique)
+        # Save results
+        os.makedirs(Path(f"results/{env_name}/{technique.name}"), exist_ok=True)
+        pd.Series(data=rewards_per_episode).to_csv(Path(f"results/{env_name}/{technique.name}/raw_rewards.csv"), index=False)
+        smoothed_rewards.to_csv(Path(f"results/{env_name}/{technique.name}/smoothed_rewards.csv"), index=False)
+        
+        # Add this ablation technique's results to the graph
+        plt.plot(rewards_per_episode, label=f"Raw Reward - {technique.name}", alpha=0.3)
+        # Plot 'trend'
+        plt.plot(smoothed_rewards, label=f'EMA - {technique.name}', alpha=1.0)
+    
+    plt.legend()
+    plt.title(f'Raw and Smoothed Rewards by the Episode: {env_name}')
     plt.xlabel("Episodes")
     plt.ylabel("Reward")
-    plt.legend()
-    plt.grid(visible=True, alpha=0.2)
-    plt.savefig(f"results/training_graph_{ENV_NAME}.png")
+    plt.savefig(f"results/{env_name}_all_ablation_techniques.png")
     plt.close()
-        
+
+def main():
+    for env in HYPERPARAMETERS.keys():
+        obtain_results(env_name=env)    
             
 if __name__ == "__main__":
     main()
