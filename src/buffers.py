@@ -23,7 +23,7 @@ class ReplayBuffer:
             next_state (torch.tensor): Resulting next state
             done (int): Flag (0/1) to indicate if episode is done after this experience
         """
-        self.state[self.ptr] = torch.tensor(state)
+        self.state[self.ptr] = torch.tensor(state, dtype=torch.float32)
         self.action[self.ptr] = action
         self.reward[self.ptr] = reward
         self.next_state[self.ptr] = torch.tensor(next_state)

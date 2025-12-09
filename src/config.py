@@ -1,6 +1,9 @@
-ENV_NAME = 'MiniGrid-FourRooms-v0'
+import torch
 
+ENV_NAME = 'MiniGrid-FourRooms-v0'
+NUM_FRAMES = 50000
 HIDDEN_FEATURES = 512
+DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu' 
 
 class AblationConfig:
         
@@ -23,6 +26,10 @@ HYPERPARAMETERS = {
             'V_min' : -10, # Minimum atom value in the case of distributional RL
             'V_max' : 10, # Maximum atom value
             'num_atoms' : 51, # Number of atoms to be used in distributional RL
+            'magnet_scale' : 0.01, # Scale of the magnet loss when using magnet method
+            'kl_penalty_scale' : 1.0, # Scale of the kl_penalty loss when using kl_penalty method
+            'tau' : 0.1, # Scale of the new network when updating the old network if using a delayed network update
+            'hard_update_freq' : 1000, # In the case of NOT using delayed q-network updating, how often is target_q replaced with online_q
     },
     'MiniGrid-FourRooms-v0': {
             'lr' : 1e-4, 
@@ -33,8 +40,12 @@ HYPERPARAMETERS = {
             'epsilon_end' : 0.05,
             'epsilon_decay' : 10000, 
             'techniques' : AblationConfig(use_delayed=True),
-            'V_min' : -10, # Minimum atom value in the case of distributional RL
-            'V_max' : 10, # Maximum atom value
-            'num_atoms' : 51, # Number of atoms to be used in distributional RL
+            'V_min' : -10, 
+            'V_max' : 10, 
+            'num_atoms' : 51, 
+            'magnet_scale' : 0.01,
+            'kl_penalty_scale' : 1.0,
+            'tau' : 0.1,
+            'hard_update_freq' : 1000,
     }
 }
