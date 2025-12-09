@@ -40,7 +40,7 @@ def main():
             curr_state, _ = env.reset()
             rewards_per_episode.append(curr_episode_reward)
             curr_episode_reward = 0
-            print(f"Episode: {len(rewards_per_episode)} | Reward: {curr_episode_reward:.2f} | Epsilon: {curr_epsilon:.3f} | Percent Through Training: {i*100/NUM_FRAMES:.3f}              ", end='\r')
+            print(f"Episode: {len(rewards_per_episode)} | Reward: {curr_episode_reward:.2f} | Epsilon: {curr_epsilon:.3f} | Percent Through Training: {i*100/NUM_FRAMES:.3f}%              ", end='\r')
         else:
             curr_state = next_state
             

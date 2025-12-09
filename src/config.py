@@ -1,6 +1,6 @@
 import torch
 
-ENV_NAME = 'MiniGrid-FourRooms-v0'
+ENV_NAME = 'CartPole-v1'
 NUM_FRAMES = 200000
 HIDDEN_FEATURES = 512
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu' 
@@ -31,7 +31,7 @@ HYPERPARAMETERS = {
             'tau' : 0.005, # Scale of the new network when updating the old network if using a delayed network update
             'hard_update_freq' : 2000, # In the case of NOT using delayed q-network updating, how often is target_q replaced with online_q
     },
-    'MiniGrid-FourRooms-v0': {
+    'CartPole-v1': {
             'lr' : 2.5e-4, 
             'batch_size' : 64, 
             'gamma' : 0.99,
