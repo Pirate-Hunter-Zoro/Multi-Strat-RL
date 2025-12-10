@@ -17,7 +17,7 @@ class RainbowAgent:
         self.optimizer = optim.Adam(self.online_net.parameters(), lr=lr)
         self.num_actions = num_actions
         self.support = None
-        if config_dict['techniques'].use_distributional:
+        if ablation_config.value.use_distributional:
             self.support = torch.linspace(self.v_min, self.v_max, self.num_atoms).to(DEVICE)
     
     def select_action(self, state: torch.tensor, epsilon: float) -> int:

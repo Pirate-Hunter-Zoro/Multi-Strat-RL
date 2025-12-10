@@ -1,6 +1,7 @@
 from src.agent import RainbowAgent
 from src.buffers import ReplayBuffer
 from src.config import NUM_FRAMES, HYPERPARAMETERS, DEVICE, AblationTechniques
+from src.wrappers import RLCardWrapper
 import gymnasium as gym
 import torch
 from minigrid.wrappers import FlatObsWrapper
@@ -31,6 +32,8 @@ def run_ablation(env_name: str, ablation_technique_set: AblationTechniques) -> t
     env = gym.make(id=env_name, render_mode="rgb_array")
     if "MiniGrid" in env_name:
         env = FlatObsWrapper(env)
+    elif "Leduc" in env_name:
+        env = RLCardWrapper(env)
     state_dim = env.observation_space.shape[0]
     if hasattr(env.action_space, 'n'):
         n_actions = env.action_space.n
