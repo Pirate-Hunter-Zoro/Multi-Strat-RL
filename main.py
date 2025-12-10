@@ -1,6 +1,6 @@
 from src.agent import RainbowAgent
 from src.buffers import ReplayBuffer
-from src.config import NUM_FRAMES, HYPERPARAMETERS, DEVICE, PRINT_EVERY, AblationTechniques
+from src.config import DEBUG, NUM_FRAMES, HYPERPARAMETERS, DEVICE, PRINT_EVERY, AblationTechniques
 from src.wrappers import RLCardWrapper
 import gymnasium as gym
 import torch
@@ -60,7 +60,7 @@ def run_ablation(env_name: str, ablation_technique_set: AblationTechniques) -> t
         if done:
             curr_state, _ = env.reset()
             rewards_per_episode.append(curr_episode_reward)
-            if len(rewards_per_episode) % PRINT_EVERY == 0:
+            if (len(rewards_per_episode) % PRINT_EVERY == 0) and DEBUG:
                 print(f"Episode: {len(rewards_per_episode)} | Reward: {curr_episode_reward:.2f} | Epsilon: {curr_epsilon:.3f} | Percent Through Training: {i*100/NUM_FRAMES:.3f}%              ", end='\r')
             curr_episode_reward = 0
         else:
