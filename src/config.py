@@ -3,6 +3,7 @@ from enum import Enum
 
 NUM_FRAMES = 200000
 HIDDEN_FEATURES = 512
+PRINT_EVERY = 100
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu' 
 
 class AblationConfig:
