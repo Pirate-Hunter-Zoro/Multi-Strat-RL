@@ -14,18 +14,22 @@ The project performs a full ablation study (grid search) over 16 configurations 
 This agent implements a "Rainbow" subset using **DQN** as the base algorithm.
 
 ### 1. Algorithm Specific Modifications
+
 * **Distributional RL (C51):** The network outputs a probability distribution over value atoms rather than a single scalar Q-value.
 * **Delayed Critic (Polyak Averaging):** Soft target network updates ($\tau \ll 1.0$) are used instead of standard hard updates to stabilize learning.
 
 ### 2. Algorithm Agnostic Features
+
 * **KL-Penalty Term:** A regularization term penalizing the policy if it diverges too quickly from the target distribution.
 
 ### 3. Adversarial Modifications
+
 * **Magnetic Mirror Descent (MMD):** A regularization term that tethers the online network weights to the target network weights, preventing catastrophic forgetting.
 
 ## Environments
 
 The agent is evaluated on the following domains:
+
 * **MiniGrid-FourRooms-v0:** A sparse-reward grid navigation task (Target Environment).
 * **CartPole-v1:** Dense-reward control task (Sanity Check).
 * **Leduc-v0 (via RLCard):** Discrete imperfect information poker.
@@ -85,8 +89,8 @@ sbatch launch_grid.ssub
 
 Hyperparameters are managed in `src/config.py`.
 
-  * **`AblationTechniques` Enum:** Defines the 16 binary permutations of the four implemented features.
-  * **`HYPERPARAMETERS` Dictionary:** Contains environment-specific settings (Learning Rate, Gamma, Buffer Size, Atom Count).
+* **`AblationTechniques` Enum:** Defines the 16 binary permutations of the four implemented features.
+* **`HYPERPARAMETERS` Dictionary:** Contains environment-specific settings (Learning Rate, Gamma, Buffer Size, Atom Count).
 
 To enable or disable specific environments, comment/uncomment the relevant keys in `src/config.py`.
 
@@ -94,5 +98,5 @@ To enable or disable specific environments, comment/uncomment the relevant keys 
 
 Training artifacts are saved to the `results/` directory.
 
-  * **Raw Data:** `raw_rewards.csv` and `smoothed_rewards.csv` for every configuration.
-  * **Visualization:** A combined plot showing the Exponential Moving Average (EMA) of all active techniques is generated automatically at the end of the run.
+* **Raw Data:** `raw_rewards.csv` and `smoothed_rewards.csv` for every configuration.
+* **Visualization:** A combined plot showing the Exponential Moving Average (EMA) of all active techniques is generated automatically at the end of the run.
