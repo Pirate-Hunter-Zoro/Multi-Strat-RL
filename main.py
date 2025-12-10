@@ -29,11 +29,13 @@ def run_ablation(env_name: str, ablation_technique_set: AblationTechniques) -> t
     epsilon_end = config['epsilon_end']
     epsilon_decay = config['epsilon_decay']
     
-    env = gym.make(id=env_name, render_mode="rgb_array")
-    if "MiniGrid" in env_name:
-        env = FlatObsWrapper(env)
-    elif "Leduc" in env_name:
-        env = RLCardWrapper(env)
+    if "Leduc" in env_name:
+        env = RLCardWrapper()
+    else:
+        env = gym.make(id=env_name, render_mode="rgb_array")
+        if "MiniGrid" in env_name:
+            env = FlatObsWrapper(env)
+    
     state_dim = env.observation_space.shape[0]
     if hasattr(env.action_space, 'n'):
         n_actions = env.action_space.n
@@ -97,8 +99,8 @@ def obtain_results(env_name: str):
         smoothed_rewards.to_csv(Path(f"results/{env_name}/{technique.name}/smoothed_rewards.csv"), index=False)
         
         # Add this ablation technique's results to the graph
-        plt.plot(rewards_per_episode, label=f"Raw Reward - {technique.name}", alpha=0.3)
-        # Plot 'trend'
+        plt.plot(rewards_per_episode, label=None, alpha=0.3) 
+        # Only label the smoothed line reward - this will cut our number of labels in half and increase readability
         plt.plot(smoothed_rewards, label=f'EMA - {technique.name}', alpha=1.0)
     
     plt.legend()
