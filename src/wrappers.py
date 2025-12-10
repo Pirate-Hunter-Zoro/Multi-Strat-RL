@@ -2,11 +2,11 @@ import rlcard
 import random
 import numpy as np
 
-class __DummyActionSpace:
+class _DummyActionSpace:
         def __init__(self, num_actions: int):
             self.n = num_actions
     
-class __DummyObservationSpace:
+class _DummyObservationSpace:
     def __init__(self, state_shape: any):
         self.shape = state_shape
 
@@ -14,8 +14,8 @@ class RLCardWrapper:
     
     def __init__(self):
         self.leduc_env = rlcard.make('leduc-holdem')
-        self.action_space = __DummyActionSpace(self.leduc_env.num_actions)
-        self.observation_space = __DummyObservationSpace(self.leduc_env.state_shape[0])
+        self.action_space = _DummyActionSpace(self.leduc_env.num_actions)
+        self.observation_space = _DummyObservationSpace(self.leduc_env.state_shape[0])
     
     def reset(self) -> tuple[any, dict]:
         """
