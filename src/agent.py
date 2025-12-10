@@ -87,7 +87,7 @@ class RainbowAgent:
             lower_bin_weighted_prob_addition = lower_weight * next_atom_probs_for_taken_actions # BATCH_SIZE x NUM_ATOMS
            
             # Update these two bin probabilities, over all the batches
-            m = torch.zeros(size=(batch[0].size(0), self.num_atoms)) # BATCH X NUM_ATOMS
+            m = torch.zeros(size=(batch[0].size(0), self.num_atoms), device=DEVICE) # BATCH X NUM_ATOMS
             l = l.long()
             u = u.long()
             # NOTE - the index_add_ - with the trailing '_' in the function call - is an in-place operation
