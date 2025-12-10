@@ -5,7 +5,7 @@ NUM_FRAMES = 200000
 HIDDEN_FEATURES = 512
 PRINT_EVERY = 10000
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu' 
-DEBUG = True
+DEBUG = False
 
 class AblationConfig:
         
