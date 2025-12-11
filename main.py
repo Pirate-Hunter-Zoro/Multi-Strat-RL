@@ -99,8 +99,6 @@ def obtain_results(env_name: str):
         pd.Series(data=rewards_per_episode).to_csv(Path(f"results/{env_name}/{technique.name}/raw_rewards.csv"), index=False)
         smoothed_rewards.to_csv(Path(f"results/{env_name}/{technique.name}/smoothed_rewards.csv"), index=False)
         
-        # Add this ablation technique's results to the graph
-        plt.plot(rewards_per_episode, label=None, alpha=0.3) 
         # Only label the smoothed line reward - this will cut our number of labels in half and increase readability
         plt.plot(smoothed_rewards, label=f'EMA - {technique.name}', alpha=1.0)
     
