@@ -66,7 +66,7 @@ HYPERPARAMETERS = {
             'tau' : 0.005,
             'hard_update_freq' : 2000,
     },
-    'MiniGrid-FourRooms-v0': {
+    'MiniGrid-Empty-8x8-v0': {
             'lr' : 2.5e-4, 
             'batch_size' : 64, 
             'gamma' : 0.99,

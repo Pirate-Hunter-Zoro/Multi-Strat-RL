@@ -79,7 +79,7 @@ def run_ablation(env_name: str, ablation_technique_set: AblationTechniques) -> t
     
     # Now that training is done, plot the results
     reward_series = pd.Series(data=rewards_per_episode)
-    smoothed_rewards = reward_series.ewm(span=20).mean() # Assigns higher weight to more recent rewards
+    smoothed_rewards = reward_series.ewm(span=1000).mean() # Assigns higher weight to more recent rewards
     
     return rewards_per_episode, smoothed_rewards
 
