@@ -81,5 +81,21 @@ HYPERPARAMETERS = {
             'kl_penalty_scale' : 0.1,
             'tau' : 0.005,
             'hard_update_freq' : 2000,
+    },
+    'MiniGrid-FourRooms-v0': {
+            'lr' : 2.5e-4, 
+            'batch_size' : 64, 
+            'gamma' : 0.99,
+            'buffer_size' : 100000,
+            'epsilon_start' : 1.0, 
+            'epsilon_end' : 0.05,
+            'epsilon_decay' : 50000, 
+            'V_min' : 0.0, 
+            'V_max' : 1.0, 
+            'num_atoms' : 51, 
+            'magnet_scale' : 0.01,
+            'kl_penalty_scale' : 0.1,
+            'tau' : 0.005,
+            'hard_update_freq' : 2000,
     }
 }
