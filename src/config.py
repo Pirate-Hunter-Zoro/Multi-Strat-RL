@@ -1,7 +1,7 @@
 import torch
 from enum import Enum
 
-NUM_FRAMES = 200000
+NUM_FRAMES = 1000000
 HIDDEN_FEATURES = 512
 PRINT_EVERY = 10000
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu' 
@@ -90,10 +90,10 @@ HYPERPARAMETERS = {
             'use_cnn' : True,
             'batch_size' : 64, 
             'gamma' : 0.99,
-            'buffer_size' : 100000,
+            'buffer_size' : 200000,
             'epsilon_start' : 1.0, 
             'epsilon_end' : 0.05,
-            'epsilon_decay' : 50000, 
+            'epsilon_decay' : 500000, 
             'V_min' : 0.0, 
             'V_max' : 1.0, 
             'num_atoms' : 51, 
