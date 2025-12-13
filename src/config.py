@@ -36,6 +36,7 @@ class AblationTechniques(Enum):
 HYPERPARAMETERS = {
     'Leduc-v0': {
             'lr' : 2.5e-4, # Learning rate of model
+            'use_cnn' : False, # Whether to use a convolutional neural network (for image inputs) or a fully connected network
             'batch_size' : 64, # Number of time steps that go into the gradient calculation for parameter updating
             'gamma' : 0.99, # Discount factor for future rewards
             'buffer_size' : 10000, # Number of (s,a,r,s,d) tuples remembered
@@ -52,6 +53,7 @@ HYPERPARAMETERS = {
     },
     'CartPole-v1': {
             'lr' : 2.5e-4, 
+            'use_cnn' : False,
             'batch_size' : 64, 
             'gamma' : 0.99,
             'buffer_size' : 100000,
@@ -68,6 +70,7 @@ HYPERPARAMETERS = {
     },
     'MiniGrid-Empty-8x8-v0': {
             'lr' : 2.5e-4, 
+            'use_cnn' : False,
             'batch_size' : 64, 
             'gamma' : 0.99,
             'buffer_size' : 100000,
@@ -84,6 +87,7 @@ HYPERPARAMETERS = {
     },
     'MiniGrid-FourRooms-v0': {
             'lr' : 2.5e-4, 
+            'use_cnn' : True,
             'batch_size' : 64, 
             'gamma' : 0.99,
             'buffer_size' : 100000,

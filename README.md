@@ -1,11 +1,11 @@
 # Multi-Strategy Rainbow DQN Implementation
 
 **Author:** Mikey Ferguson
-**Status:** Complete
+**Status:** Complete (Enhanced)
 
 ## Overview
 
-This repository contains an implementation of a **Rainbow DQN** agent for the 2025 RL Independent Study Final Project. The agent integrates features from three distinct categories of reinforcement learning advancements to solve discrete control environments.
+This repository contains an implementation of a **Rainbow DQN** agent for the 2025 RL Independent Study Final Project. The agent integrates features from distinct categories of reinforcement learning advancements—Algorithm Specific, Algorithm Agnostic, and Adversarial—to solve discrete control environments.
 
 The project performs a full ablation study (grid search) over 16 configurations ($2^4$) to isolate the effects of each technique on agent performance.
 
@@ -26,11 +26,17 @@ This agent implements a "Rainbow" subset using **DQN** as the base algorithm.
 
 * **Magnetic Mirror Descent (MMD):** A regularization term that tethers the online network weights to the target network weights, preventing catastrophic forgetting.
 
+### 4. Architectural Enhancements (New)
+
+* **Hybrid Vision/Vector Network:** The agent dynamically switches architectures based on the environment:
+  * **MLP (Multi-Layer Perceptron):** For flat-vector environments (CartPole, Leduc).
+  * **CNN (Convolutional Neural Network):** For visual grid-world environments (MiniGrid), allowing the agent to perceive spatial structures like walls and goals.
+
 ## Environments
 
 The agent is evaluated on the following domains:
 
-* **MiniGrid-FourRooms-v0:** A sparse-reward grid navigation task (Target Environment).
+* **MiniGrid-Empty-8x8-v0:** Visual navigation task requiring spatial awareness (Target Environment).
 * **CartPole-v1:** Dense-reward control task (Sanity Check).
 * **Leduc-v0 (via RLCard):** Discrete imperfect information poker.
 
@@ -38,15 +44,15 @@ The agent is evaluated on the following domains:
 
 ```text
 .
-├── launch_grid.ssub    # Slurm submission script for cluster training
+├── launch_grid.ssub    # Slurm submission script (using %j for unique logs)
 ├── logs/               # Slurm output and error logs
 ├── main.py             # Entry point: runs the ablation grid search
 ├── requirements.txt    # Python dependencies
 ├── src/
 │   ├── agent.py        # RainbowAgent logic (C51 projection, loss calc)
 │   ├── buffers.py      # ReplayBuffer implementation
-│   ├── config.py       # Hyperparameters and AblationConfig definitions
-│   ├── networks.py     # Neural Network architecture (Multi-head output)
+│   ├── config.py       # Hyperparameters (includes `use_cnn` flag)
+│   ├── networks.py     # Hybrid Neural Network (Conv2d & Linear heads)
 │   └── wrappers.py     # Custom wrappers for RLCard (Leduc) and MiniGrid
 └── results/            # Stores CSV logs and generated plots
 ````
@@ -91,8 +97,7 @@ Hyperparameters are managed in `src/config.py`.
 
 * **`AblationTechniques` Enum:** Defines the 16 binary permutations of the four implemented features.
 * **`HYPERPARAMETERS` Dictionary:** Contains environment-specific settings (Learning Rate, Gamma, Buffer Size, Atom Count).
-
-To enable or disable specific environments, comment/uncomment the relevant keys in `src/config.py`.
+* **`use_cnn` (Boolean):** Controls whether the agent uses the Convolutional head (True) or the Flat MLP head (False).
 
 ## Results
 

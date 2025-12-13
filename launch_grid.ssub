@@ -5,8 +5,8 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=64G
-#SBATCH -o logs/multi_strat_rl_out.txt
-#SBATCH -e logs/multi_strat_rl_err.txt
+#SBATCH -o logs/multi_strat_rl_%j_out.txt
+#SBATCH -e logs/multi_strat_rl_%j_err.txt
 #SBATCH --gres=gpu:1
 
 # Exit immediately if command fails
