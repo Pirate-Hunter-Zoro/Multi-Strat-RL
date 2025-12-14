@@ -1,6 +1,11 @@
 *.pyc
 __pycache__/
 models/
-results/
 logs/
 .DS_Store
+
+# Ignore everything inside results
+results/*
+
+# Exception: Do NOT ignore files with extensions in the root of results
+!results/*.*

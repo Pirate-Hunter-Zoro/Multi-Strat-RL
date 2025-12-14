@@ -103,7 +103,7 @@ def obtain_results(env_name: str):
         plt.plot(smoothed_rewards, label=f'EMA - {technique.name}', alpha=1.0)
     
     plt.legend()
-    plt.title(f'Raw and Smoothed Rewards by the Episode: {env_name}')
+    plt.title(f'Smoothed Rewards by the Episode: {env_name}')
     plt.xlabel("Episodes")
     plt.ylabel("Reward")
     plt.savefig(f"results/{env_name}_all_ablation_techniques.png")
