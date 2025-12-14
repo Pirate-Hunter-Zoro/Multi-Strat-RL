@@ -61,7 +61,7 @@ def run_ablation(env_name: str, ablation_technique_set: AblationTechniques) -> t
             curr_state, _ = env.reset()
             rewards_per_episode.append(curr_episode_reward)
             if (len(rewards_per_episode) % PRINT_EVERY == 0) and DEBUG:
-                print(f"Episode: {len(rewards_per_episode)} | Reward: {curr_episode_reward:.2f} | Epsilon: {curr_epsilon:.3f} | Percent Through Training: {i*100/NUM_FRAMES:.3f}%              ", end='\r')
+                print(f"Episode: {len(rewards_per_episode)} | Reward: {curr_episode_reward:.2f} | Epsilon: {curr_epsilon:.3f} | Percent Through Training: {i*100/NUM_FRAMES:.3f}%              ", end='\r', flush=True)
             curr_episode_reward = 0
         else:
             curr_state = next_state
@@ -92,7 +92,7 @@ def obtain_results(env_name: str):
     # Create a plot for all ablation techniques
     plt.figure(figsize=(10, 5))
     for technique in AblationTechniques:
-        print(f"Running technique: {technique.name} with config: Distributional={technique.value.use_distributional}, Delayed={technique.value.use_delayed}, Magnet={technique.value.use_magnet}, KL Penalty={technique.value.use_kl_penalty}")
+        print(f"Running technique: {technique.name} with config: Distributional={technique.value.use_distributional}, Delayed={technique.value.use_delayed}, Magnet={technique.value.use_magnet}, KL Penalty={technique.value.use_kl_penalty}", flush=True)
         rewards_per_episode, smoothed_rewards = run_ablation(env_name=env_name, ablation_technique_set=technique)
         # Save results
         os.makedirs(Path(f"results/{env_name}/{technique.name}"), exist_ok=True)
